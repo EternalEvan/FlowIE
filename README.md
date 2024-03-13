@@ -8,14 +8,14 @@ FlowIE is a simple yet highly effective <ins>**Flow**</ins>-based <ins>**I**</in
 
 * [ ] Release model and inference code.
 * [ ] Release code for training dataloader .
-<!--
+
 
 ## 💡 Pipeline
 
 ![](./assets/pipeline.png)
 
 ## ⭐️ Performance
-
+<!--
 ![](./assets/performance.png)
 ![](./assets/table.png)
 
