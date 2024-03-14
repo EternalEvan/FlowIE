@@ -1,0 +1,31 @@
+dataset:
+  target: dataset.codeformer.CodeformerDatasetLQ
+  params:
+    # Path to the file list.
+    # file_list: /data1/zyx/FFHQ512/test.list
+    hq_list: /home/user001/zwl/zyx/Diffbir/test_list/1024.list
+    lq_list: /home/user001/zwl/zyx/Diffbir/test_list/1024.list
+    #lq_list: /home/user001/zwl/zyx/Diffbir/test_list/inp-z1.list
+    #hq_list: /home/user001/zwl/data/CelebChild-Test/child.list
+    #lq_list: /home/user001/zwl/data/CelebChild-Test/child.list
+    # wider :34.391226832176  lfw:38.66
+    out_size: 512
+    crop_type: none
+    use_hflip: False
+    
+    blur_kernel_size: 41
+    kernel_list: ['iso', 'aniso']
+    kernel_prob: [0.5, 0.5]
+    blur_sigma: [0.1, 10]
+    downsample_range: [0.8, 8]
+    noise_range: [0, 20]
+    jpeg_range: [60, 100]
+
+data_loader:
+  batch_size: 2
+  shuffle: false
+  num_workers: 16
+  drop_last: true
+
+batch_transform:
+  target: dataset.batch_transform.IdentityBatchTransform

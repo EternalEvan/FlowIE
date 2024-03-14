@@ -1,0 +1,47 @@
+data:
+  target: dataset.data_module.BIRDataModule
+  params:
+    # Path to training set configuration file.
+    train_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/dehaze_train.yaml
+    # Path to validation set configuration file.
+    val_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/dehaze_val.yaml
+
+model:
+  # You can set learning rate in the following configuration file.
+  config: configs/model/swinir.yaml
+  # Path to the checkpoints or weights you want to resume.
+  resume: /home/user001/zwl/zyx/Diffbir/weights/general_swinir_v1.ckpt
+
+lightning:
+  seed: 231
+  
+  trainer:
+    accelerator: ddp
+    precision: 32
+    # Indices of GPUs used for training.
+    gpus: [1,2,3,5,6,7]
+    # Path to save logs and checkpoints.
+    default_root_dir: /home/user001/zwl/data/flowir_work_dirs/swin_dehaze
+    # Max number of training steps (batches).
+    max_steps: 150001
+    # Validation frequency in terms of training steps.
+    val_check_interval: 250
+    # Log frequency of tensorboard logger.
+    log_every_n_steps: 250
+    # Accumulate gradients from multiple batches so as to increase batch size.
+    accumulate_grad_batches: 1
+  
+  callbacks:
+    - target: model.callbacks.ImageLogger
+      params:
+        # Log frequency of image logger.
+        log_every_n_steps: 1000
+        max_images_each_step: 4
+        log_images_kwargs: ~
+
+    - target: model.callbacks.ModelCheckpoint
+      params:
+        # Frequency of saving checkpoints.
+        every_n_train_steps: 10000
+        save_top_k: -1
+        filename: "{step}"
