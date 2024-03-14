@@ -1,5 +1,5 @@
 # FlowIE: Efficient Image Enhancement via Rectified Flow (CVPR 2024)
-*[Yixuan Zhu\*](https://eternalevan.github.io/), [Wenliang Zhao\*](https://wl-zhao.github.io/), [Yansong Tang†](https://andytang15.github.io/), [Ao Li](https://rammusleo.github.io/), [Jie Zhou](https://scholar.google.com/citations?user=6a79aPwAAAAJ&hl=en&authuser=1), [Jiwen Lu](http://ivg.au.tsinghua.edu.cn/Jiwen_Lu/)*
+*[Yixuan Zhu\*](https://eternalevan.github.io/), [Wenliang Zhao\*](https://wl-zhao.github.io/), [Ao Li](https://rammusleo.github.io/), [Yansong Tang†](https://andytang15.github.io/), [Jie Zhou](https://scholar.google.com/citations?user=6a79aPwAAAAJ&hl=en&authuser=1), [Jiwen Lu](http://ivg.au.tsinghua.edu.cn/Jiwen_Lu/)*
 ----
 The repository contains the official implementation for the paper "FlowIE: Efficient Image Enhancement via Rectified Flow" (CVPR 2024).
 
