@@ -62,9 +62,10 @@ Please download our pretrained checkpoints from [this link](https://cloud.tsingh
 
 ### 📊 4. Test & Evaluation
 
-You can test FlowIE use following commands:
+You can test FlowIE with following commands:
+- **Evaluation for BFR**
 ```bash
-coming soon
+python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt --has_aligned  --input /data/celeba_512_validation_lq/  --output ./outputs/bfr_exp
 ```
 <!--```bash
 CUDA_VISIBLE_DEVICES=0 \
