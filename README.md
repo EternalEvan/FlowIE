@@ -116,13 +116,13 @@ Before training, you also need to configure training-related information in `./c
 |   |   |-- 3DPW_validation_crowd_hhrnet_result.json
 |   |   |-- imageFiles
 |   |   |-- sequenceFiles
-```
+```-->
 ## 🫰 Acknowledgments
 
-We would like to express our sincere thanks to the author of [JOTR](https://github.com/xljh0520/JOTR) for the clear code base and quick response to our issues. 
+We would like to express our sincere thanks to the author of [DiffBIR](https://github.com/XPixelGroup/DiffBIR) for the clear code base and quick response to our issues. 
 
-We also thank [ControlNet](https://github.com/lllyasviel/ControlNet), [VPD](https://github.com/wl-zhao/VPD) and [LoRA](https://github.com/cloneofsimo/lora), for our code is partially borrowing from them.
--->
+We also thank [CodeFormer](https://github.com/sczhou/CodeFormer), [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) and [LoRA](https://github.com/cloneofsimo/lora), for our code is partially borrowing from them.
+
 ## 🔖 Citation
 Please cite us if our work is useful for your research.
 
