@@ -67,6 +67,11 @@ You can test FlowIE with following commands:
 ```bash
 python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt --has_aligned  --input /data/celeba_512_validation_lq/  --output ./outputs/bfr_exp
 ```
+
+- **Evaluation for BSR**
+```bash
+coming soon
+```
 <!--```bash
 CUDA_VISIBLE_DEVICES=0 \
 torchrun \
@@ -79,6 +84,9 @@ eval.py \
 ```-->
 
 The evaluation process can be done with one Nvidia GeForce RTX 3090 GPU (24GB VRAM). You can use more GPUs by specifying the GPU ids.
+
+### 🔥 5. Training
+coming soon!
 <!--**For evaluation only, you can just prepare 3DPW dataset.**-->
 <!--
 ![](./assets/performance.png)
