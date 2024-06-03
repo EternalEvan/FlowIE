@@ -28,15 +28,9 @@ val_files = files
 print(len(val_files))
 valid_files = []
 for i,path in enumerate(val_files):
-    #img = cv2.imread(path)
-    #h,w,_ = img.shape
-    #if h>=512 and w>=512:
-    
-    #print(path)
-    # if i <69000:
-    #     continue
+
     valid_files.append(path)
-    #pdb.set_trace()
+
 
 print('Total files:{}'.format(len(valid_files)))
 
@@ -47,6 +41,6 @@ os.makedirs(args.save_folder, exist_ok=True)
 #     for file_path in train_files:
 #         fp.write(f"{file_path}\n")
 
-with open(os.path.join(args.save_folder, "1024.list"), "w") as fp:
+with open(os.path.join(args.save_folder, "train.list"), "w") as fp:
     for file_path in valid_files:
         fp.write(f"{file_path}\n")

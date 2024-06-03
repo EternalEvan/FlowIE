@@ -38,6 +38,18 @@ For BFR evaluation, please refer to [here](https://xinntao.github.io/projects/gf
 
 For BSR, we utilize [ImageNet](https://www.image-net.org/index.php) for training. For evaluation, you can refer to [BSRGAN](https://github.com/cszn/BSRGAN/tree/main/testsets) for *RealSRSet*. 
 
+To prepare the training list, you need to simply run the script:
+```bash
+python ./scripts/make_file_list.py --img_folder /data/ILSVRC2012  --save_folder ./dataset/list/imagenet
+python ./scripts/make_file_list.py --img_folder /data/FFHQ  --save_folder ./dataset/list/ffhq
+``` 
+The file list looks like this:
+```bash
+/path/to/image_1.png
+/path/to/image_2.png
+/path/to/image_3.png
+...
+``` 
 ### 🗂️ 3. Download Checkpoints
 
 Please download our pretrained checkpoints from [this link](https://cloud.tsinghua.edu.cn/d/4fa2a0880a9243999561/) and put them under `./weights`. The file directory should be:
