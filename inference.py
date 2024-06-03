@@ -2,7 +2,7 @@ from typing import List, Tuple, Optional
 import os
 import math
 from argparse import ArgumentParser, Namespace
-
+import pdb
 import numpy as np
 import torch
 import einops
@@ -18,6 +18,9 @@ from utils.image import auto_resize, pad
 from utils.common import instantiate_from_config, load_state_dict
 from utils.file import list_image_files, get_file_name_parts
 
+from utils.image import (
+    wavelet_reconstruction, adaptive_instance_normalization
+)
 
 @torch.no_grad()
 def process(
@@ -92,6 +95,129 @@ def process(
     
     return preds, stage1_preds
 
+@torch.no_grad()
+def process_face(
+    model: ControlLDM,
+    control_imgs: List[np.ndarray],
+    steps: int,
+    midpoint_idx : int,
+    strength: float,
+    color_fix_type: str,
+    disable_preprocess_model: bool,
+    cond_fn: Optional[MSEGuidance],
+    tiled: bool,
+    tile_size: int,
+    tile_stride: int,
+    use_mean_value = True,
+) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+    """
+    Apply DiffBIR model on a list of low-quality images.
+    
+    Args:
+        model (ControlLDM): Model.
+        control_imgs (List[np.ndarray]): A list of low-quality images (HWC, RGB, range in [0, 255]).
+        steps (int): Sampling steps.
+        strength (float): Control strength. Set to 1.0 during training.
+        color_fix_type (str): Type of color correction for samples.
+        disable_preprocess_model (bool): If specified, preprocess model (SwinIR) will not be used.
+        cond_fn (Guidance | None): Guidance function that returns gradient to guide the predicted x_0.
+        tiled (bool): If specified, a patch-based sampling strategy will be used for sampling.
+        tile_size (int): Size of patch.
+        tile_stride (int): Stride of sliding patch.
+    
+    Returns:
+        preds (List[np.ndarray]): Restoration results (HWC, RGB, range in [0, 255]).
+        stage1_preds (List[np.ndarray]): Outputs of preprocess model (HWC, RGB, range in [0, 255]). 
+            If `disable_preprocess_model` is specified, then preprocess model's outputs is the same 
+            as low-quality inputs.
+    """
+    n_samples = len(control_imgs)
+    sampler = SpacedSampler(model, var_type="fixed_small")
+    control = torch.tensor(np.stack(control_imgs) / 255.0, dtype=torch.float32, device=model.device).clamp_(0, 1)
+    control = einops.rearrange(control, "n h w c -> n c h w").contiguous()
+    
+    if not disable_preprocess_model:
+        control = model.preprocess_model(control)
+    model.control_scales = [strength] * 13
+    
+    c_latent = [model.apply_condition_encoder(control)]
+
+    
+    if cond_fn is not None:
+        cond_fn.load_target(2 * control - 1)
+    
+    height, width = control.size(-2), control.size(-1)
+    shape = (n_samples, 4, height // 8, width // 8)
+    
+    eular_steps = [999,799,599,399,199]
+    dt = 1./len(eular_steps)
+    
+    b = shape[0]
+ 
+    x_T = torch.randn(shape, device=model.device, dtype=torch.float32)
+    c_crossattn = [model.get_learned_conditioning([''] * b)]
+    cond_txt = torch.cat(c_crossattn, 1)
+    
+    if not tiled:
+        x_t = x_T
+       
+        for i,step in enumerate(eular_steps):
+  
+            ts = torch.ones(x_T.shape[0],device=model.device)*step
+            
+            if c_latent is None:
+                v = model.model.diffusion_model(x=x_t, timesteps=ts, context=cond_txt, control=None, only_mid_control=model.only_mid_control)
+            else:
+                controls = model.control_model(
+                    x=x_t, hint=torch.cat(c_latent, 1),
+                    timesteps=ts, context=cond_txt
+                )
+                controls = [c * scale for c, scale in zip(controls, model.control_scales)]
+                v = model.model.diffusion_model(x=x_t, timesteps=ts, context=cond_txt, control=controls, only_mid_control=model.only_mid_control)
+            
+            # update x_t
+            x_t = x_t + v*dt
+
+            # Mean Value Sapmling
+            if use_mean_value and i == midpoint_idx:
+                xt = x_T + v      
+                break
+            
+        x = xt
+        samples = model.decode_first_stage(x)
+        samples = (samples + 1) / 2
+        
+        if color_fix_type == "adain":
+            samples = adaptive_instance_normalization(samples, control)
+        elif color_fix_type == "wavelet":
+            samples = wavelet_reconstruction(samples, control)
+        else:
+            assert color_fix_type == "none", f"unexpected color fix type: {color_fix_type}"
+    
+    # if not tiled:
+    #     samples = sampler.sample(
+    #         steps=steps, shape=shape, cond_img=control,
+    #         positive_prompt="", negative_prompt="", x_T=x_T,
+    #         cfg_scale=1.0, cond_fn=cond_fn,
+    #         color_fix_type=color_fix_type
+    #     )
+    # else:
+    #     samples = sampler.sample_with_mixdiff(
+    #         tile_size=tile_size, tile_stride=tile_stride,
+    #         steps=steps, shape=shape, cond_img=control,
+    #         positive_prompt="", negative_prompt="", x_T=x_T,
+    #         cfg_scale=1.0, cond_fn=cond_fn,
+    #         color_fix_type=color_fix_type
+    #     )
+    x_samples = samples.clamp(0, 1)
+    
+    x_samples = (einops.rearrange(x_samples, "b c h w -> b h w c") * 255).cpu().numpy().clip(0, 255).astype(np.uint8)
+    control = (einops.rearrange(control, "b c h w -> b h w c") * 255).cpu().numpy().clip(0, 255).astype(np.uint8)
+    
+    preds = [x_samples[i] for i in range(n_samples)]
+    stage1_preds = [control[i] for i in range(n_samples)]
+    
+    return preds, stage1_preds
 
 def parse_args() -> Namespace:
     parser = ArgumentParser()
@@ -191,12 +317,12 @@ def main() -> None:
             save_path = os.path.join(args.output, os.path.relpath(file_path, args.input))
             parent_path, stem, _ = get_file_name_parts(save_path)
             save_path = os.path.join(parent_path, f"{stem}_{i}.png")
-            if os.path.exists(save_path):
-                if args.skip_if_exist:
-                    print(f"skip {save_path}")
-                    continue
-                else:
-                    raise RuntimeError(f"{save_path} already exist")
+            # if os.path.exists(save_path):
+            #     if args.skip_if_exist:
+            #         print(f"skip {save_path}")
+            #         continue
+            #     else:
+            #         raise RuntimeError(f"{save_path} already exist")
             os.makedirs(parent_path, exist_ok=True)
             
             # initialize latent image guidance

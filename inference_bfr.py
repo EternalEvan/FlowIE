@@ -15,7 +15,7 @@ from utils.image import auto_resize, pad
 from utils.file import load_file_from_url
 from utils.face_restoration_helper import FaceRestoreHelper
 
-from inference import process, check_device
+from inference import process, check_device, process_face
 
 pretrained_models = {
     'general_v1': {
@@ -32,15 +32,15 @@ def parse_args() -> Namespace:
     parser = ArgumentParser()
     # model
     # Specify the model ckpt path, and the official model can be downloaded direclty.
-    parser.add_argument("--ckpt", type=str, help='Model checkpoint.', default='/home/user001/zwl/data/cldm_weights/face_full_v1.ckpt')
-    parser.add_argument("--config", type=str, default='configs/model/diffbir_eval.yaml', help='Model config file.')
+    parser.add_argument("--ckpt", type=str, help='Model checkpoint.', default='weights/face_full_v1.ckpt')
+    parser.add_argument("--config", type=str, default='configs/model/cldm.yaml', help='Model config file.')
     parser.add_argument("--reload_swinir", action="store_true")
     parser.add_argument("--swinir_ckpt", type=str, default=None)
 
     # input and preprocessing
     parser.add_argument("--input", type=str, required=True)
-    parser.add_argument("--steps", type=int, default=500)
-    parser.add_argument("--sr_scale", type=float, default=2, help='An upscale factor.')
+    parser.add_argument("--steps", type=int, default=50)
+    parser.add_argument("--sr_scale", type=float, default=1, help='An upscale factor.')
     parser.add_argument("--image_size", type=int, default=512, help='Image size as the model input.')
     parser.add_argument("--repeat_times", type=int, default=1, help='To generate multiple results for each input image.')
     parser.add_argument("--disable_preprocess_model", action="store_true")
@@ -77,25 +77,25 @@ def build_diffbir_model(model_config, ckpt, swinir_ckpt=None):
         swinir_ckpt: checkpoint file path of the swinir model.
             load swinir from the main model if set None.
     '''
-    weight_root = os.path.dirname(ckpt)
+    # weight_root = os.path.dirname(ckpt)
 
-    # download ckpt automatically if ckpt not exist in the local path
-    if 'general_full_v1' in ckpt:
-        ckpt_url = pretrained_models['general_v1']['ckpt_url']
-        if swinir_ckpt is None:
-            swinir_ckpt = f'{weight_root}/general_swinir_v1.ckpt'
-            swinir_url  = pretrained_models['general_v1']['swinir_url']
-    elif 'face_full_v1' in ckpt:
-        # swinir ckpt is already included in the main model
-        ckpt_url = pretrained_models['face_v1']['ckpt_url']
-    else:
-        # define a custom diffbir model
-        raise NotImplementedError('undefined diffbir model type!')
+    # # download ckpt automatically if ckpt not exist in the local path
+    # if 'general_full_v1' in ckpt:
+    #     ckpt_url = pretrained_models['general_v1']['ckpt_url']
+    #     if swinir_ckpt is None:
+    #         swinir_ckpt = f'{weight_root}/general_swinir_v1.ckpt'
+    #         swinir_url  = pretrained_models['general_v1']['swinir_url']
+    # elif 'face_full_v1' in ckpt:
+    #     # swinir ckpt is already included in the main model
+    #     ckpt_url = pretrained_models['face_v1']['ckpt_url']
+    # else:
+    #     # define a custom diffbir model
+    #     raise NotImplementedError('undefined diffbir model type!')
     
-    if not os.path.exists(ckpt):
-        ckpt = load_file_from_url(ckpt_url, weight_root)
-    if swinir_ckpt is not None and not os.path.exists(swinir_ckpt):
-        swinir_ckpt = load_file_from_url(swinir_url, weight_root)
+    # if not os.path.exists(ckpt):
+    #     ckpt = load_file_from_url(ckpt_url, weight_root)
+    # if swinir_ckpt is not None and not os.path.exists(swinir_ckpt):
+    #     swinir_ckpt = load_file_from_url(swinir_url, weight_root)
     
     model: ControlLDM = instantiate_from_config(OmegaConf.load(model_config))
     load_state_dict(model, torch.load(ckpt), strict=True)
@@ -184,19 +184,21 @@ def main() -> None:
                     continue
                 else:
                     raise RuntimeError(f"Image {basename} already exist")
-            
-            try:
-                preds, stage1_preds = process(
-                    model, face_helper.cropped_faces, steps=args.steps,
-                    strength=1,
-                    color_fix_type=args.color_fix_type,
-                    disable_preprocess_model=args.disable_preprocess_model,
-                    cond_fn=None, tiled=False, tile_size=None, tile_stride=None
-                )
-            except RuntimeError as e:
-                # Avoid cuda_out_of_memory error.
-                print(f"{file_path}, error: {e}")
-                continue
+         
+            # try:
+             
+            preds, stage1_preds = process_face(
+                model, face_helper.cropped_faces, steps=args.steps,
+                strength=1,
+                midpoint_idx = 3,
+                color_fix_type=args.color_fix_type,
+                disable_preprocess_model=args.disable_preprocess_model,
+                cond_fn=None, tiled=False, tile_size=None, tile_stride=None
+            )
+            # except RuntimeError as e:
+            #     # Avoid cuda_out_of_memory error.
+            #     print(f"{file_path}, error: {e}")
+            #     continue
             
             for restored_face in preds:
                 # unused stage1 preds
@@ -209,7 +211,7 @@ def main() -> None:
                 if bg_upsampler is not None:
                     print(f'upsampling the background image using {args.bg_upsampler}...')
                     if args.bg_upsampler == 'DiffBIR':
-                        bg_img, _ = process(
+                        bg_img, _ = process_face(
                             bg_upsampler, [x], steps=args.steps,
                             color_fix_type=args.color_fix_type,
                             strength=1, disable_preprocess_model=args.disable_preprocess_model,
