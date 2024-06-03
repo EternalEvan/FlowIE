@@ -124,7 +124,18 @@ We would like to express our sincere thanks to the author of [JOTR](https://gith
 We also thank [ControlNet](https://github.com/lllyasviel/ControlNet), [VPD](https://github.com/wl-zhao/VPD) and [LoRA](https://github.com/cloneofsimo/lora), for our code is partially borrowing from them.
 -->
 ## 🔖 Citation
+Please cite us if our work is useful for your research.
 
+```
+@inproceedings{
+zhu2024flowie,
+title={FlowIE：Efficient Image Enhancement via Rectified Flow},
+author={Yixuan Zhu, Wenliang Zhao, Ao Li, Yansong Tang, Jie Zhou, Jiwen Lu},
+booktitle={Conference on Computer Vision and Pattern Recognition 2024},
+year={2024},
+url={https://openreview.net/forum?id=LjWYqguCBS}
+}
+```
 ## 🔑 License
 
 This code is distributed under an [MIT LICENSE](./LICENSE).
