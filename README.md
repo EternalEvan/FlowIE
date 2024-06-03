@@ -19,18 +19,19 @@ FlowIE is a simple yet highly effective <ins>**Flow**</ins>-based <ins>**I**</in
 
 ## ⭐️ Performance
 Coming soon!
-<!--
-![](./assets/performance.png)
-![](./assets/table.png)
+
 
 ## 😀Quick Start
 ### ⚙️ 1. Installation
 
 We recommend you to use an [Anaconda](https://www.anaconda.com/) virtual environment. If you have installed Anaconda, run the following commands to create and activate a virtual environment.
 ``` bash
-conda env create -f environment.yaml
-conda activate dpmesh
+conda env create -f requirements.txt
+conda activate FlowIE
 ```
+<!--
+![](./assets/performance.png)
+![](./assets/table.png)
 ### 💾 2. Data Preparation
 
 We prepare the data in a samilar way as [3DCrowdNet](https://github.com/hongsukchoi/3DCrowdNet_RELEASE) & [JOTR](https://github.com/hongsukchoi/3DCrowdNet_RELEASE/blob/main/assets/directory.md). Please refer to [here](https://github.com/hongsukchoi/3DCrowdNet_RELEASE/blob/main/assets/directory.md) for *dataset*, *SMPL model*, *VPoser model*. 
