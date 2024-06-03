@@ -2,19 +2,16 @@ data:
   target: dataset.data_module.BIRDataModule
   params:
     # Path to training set configuration file.
-    train_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/face_train.yaml
+    train_config: 
     # Path to validation set configuration file.
-    val_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/face_val.yaml
+    val_config: 
 
 model:
   # You can set learning rate in the following configuration file.
   config: configs/model/cldm.yaml
   # Path to the checkpoints or weights you want to resume. At the begining, 
   # this should be set to the initial weights created by scripts/make_stage2_init_weight.py.
-  # resume: /home/user001/zwl/data/flowir_work_dirs/gray3/lightning_logs/version_0/checkpoints/step=9999.ckpt
-  # resume: /home/user001/zwl/data/flowir_work_dirs/enhance2/lightning_logs/version_0/checkpoints/step=4999.ckpt
-  # resume: /home/zyx/DiffBIR-main/work_dirs/exp4/lightning_logs/version_18/checkpoints/step=24999.ckpt
-  resume: /home/user001/zwl/data/cldm_weights/face_full_v1.ckpt
+  resume: ./weights/v2-1_512-ema-pruned.ckpt
 
 lightning:
   seed: 231
@@ -25,7 +22,7 @@ lightning:
     # Indices of GPUs used for training.
     gpus: [1,2,3,4,5,6,7]
     # Path to save logs and checkpoints.
-    default_root_dir: /home/user001/zwl/data/flowir_work_dirs/lock_sd
+    default_root_dir: ./work_dirs/exp1
     # Max number of training steps (batches).
     max_steps: 250001
     # Validation frequency in terms of training steps.
