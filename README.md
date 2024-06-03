@@ -67,6 +67,10 @@ You can test FlowIE with following commands:
 ```bash
 python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt --has_aligned  --input /data/celeba_512_validation_lq/  --output ./outputs/bfr_exp
 ```
+**Quick Test**
+```bash
+python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt  --input ./assets/faces --output ./outputs/demo
+```
 
 - **Evaluation for BSR**
 ```bash
