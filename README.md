@@ -72,6 +72,7 @@ python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt --has_aligned  --inp
 coming soon
 ```
 - **Quick Test**
+
 For a quick test, we collect some test samples in `./assets`. You can run the demo for BFR: 
 ```bash
 python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt  --input ./assets/faces --output ./outputs/demo
