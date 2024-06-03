@@ -97,7 +97,10 @@ The evaluation process can be done with one Nvidia GeForce RTX 3090 GPU (24GB VR
 ### 🔥 5. Training
 The key component in FlowIE is a path estimator tuned from [Stable Diffusion v2.1 base](https://huggingface.co/stabilityai/stable-diffusion-2-1-base). Please download it to `./weights`. Another part is the initial module, which can be found in [checkpoints](https://cloud.tsinghua.edu.cn/d/4fa2a0880a9243999561/).
 
-Before training, you also need to configure training-related information in `./configs/train_cldm.yaml`.
+Before training, you also need to configure training-related information in `./configs/train_cldm.yaml`. Then run this command to start training:
+```bash
+coming soon
+```
 <!--**For evaluation only, you can just prepare 3DPW dataset.**-->
 <!--
 ![](./assets/performance.png)
