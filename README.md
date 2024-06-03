@@ -15,7 +15,7 @@ FlowIE is a simple yet highly effective <ins>**Flow**</ins>-based <ins>**I**</in
 
 ## 💡 Pipeline
 
-![](./assets/pipeline.png)
+![](./assets/pipeline.pdf)
 
 ## ⭐️ Performance
 Coming soon!
