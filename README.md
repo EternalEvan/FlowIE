@@ -29,17 +29,17 @@ We recommend you to use an [Anaconda](https://www.anaconda.com/) virtual environ
 conda env create -f requirements.txt
 conda activate FlowIE
 ```
-<!--
-![](./assets/performance.png)
-![](./assets/table.png)
+
 ### 💾 2. Data Preparation
 
-We prepare the data in a samilar way as [3DCrowdNet](https://github.com/hongsukchoi/3DCrowdNet_RELEASE) & [JOTR](https://github.com/hongsukchoi/3DCrowdNet_RELEASE/blob/main/assets/directory.md). Please refer to [here](https://github.com/hongsukchoi/3DCrowdNet_RELEASE/blob/main/assets/directory.md) for *dataset*, *SMPL model*, *VPoser model*. 
+We prepare the data in a samilar way as [GFPGAN](https://xinntao.github.io/projects/gfpgan) & [DiffBIR](https://github.com/XPixelGroup/DiffBIR). Please refer to [here](https://xinntao.github.io/projects/gfpgan) for *dataset*, *SMPL model*, *VPoser model*. 
 
 For 3DPW-OC and 3DPW-PC, we apply the same input key-points annotations as [JOTR](https://github.com/hongsukchoi/3DCrowdNet_RELEASE/blob/main/assets/directory.md). Please refer to [3DPW-OC](https://drive.google.com/file/d/1IPE8Yw7ysd97Uv6Uw24el1yRs2r_HtCR/view?usp=sharing) & [3DPW-PC](https://drive.google.com/file/d/1xzZvUj1lR1ECbzUI4JOooC_r2LF6Qs5m/view?usp=sharing).
 
 **For evaluation only, you can just prepare 3DPW dataset.**
-
+<!--
+![](./assets/performance.png)
+![](./assets/table.png)
 ```
 |-- common
 |   |-- utils
