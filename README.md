@@ -47,6 +47,25 @@ Please download our pretrained checkpoints from [this link](https://cloud.tsingh
 |--|-- FlowIE_bfr_v1.ckpt
 |--|-- FlowIE_bsr_v1.ckpt
 ```
+
+### 📊 4. Test & Evaluation
+
+You can test FlowIE use following commands:
+```bash
+coming soon
+```
+<!--```bash
+CUDA_VISIBLE_DEVICES=0 \
+torchrun \
+--master_port 29591 \
+--nproc_per_node 1 \
+eval.py \
+--cfg ./configs/main_train.yml \
+--exp_id="main_train" \
+--distributed \
+```-->
+
+The evaluation process can be done with one Nvidia GeForce RTX 3090 GPU (24GB VRAM). You can use more GPUs by specifying the GPU ids.
 <!--**For evaluation only, you can just prepare 3DPW dataset.**-->
 <!--
 ![](./assets/performance.png)
@@ -66,23 +85,6 @@ Please download our pretrained checkpoints from [this link](https://cloud.tsingh
 |   |   |-- imageFiles
 |   |   |-- sequenceFiles
 ```
-### 📊 4. Test & Evaluation
-
-You can test DPMesh use following commands:
-
-```bash
-CUDA_VISIBLE_DEVICES=0 \
-torchrun \
---master_port 29591 \
---nproc_per_node 1 \
-eval.py \
---cfg ./configs/main_train.yml \
---exp_id="main_train" \
---distributed \
-```
-
-The evaluation process can be done with one Nvidia GeForce RTX 4090 GPU (24GB VRAM). You can use more GPUs by specifying the GPU ids.
-
 ## 🫰 Acknowledgments
 
 We would like to express our sincere thanks to the author of [JOTR](https://github.com/xljh0520/JOTR) for the clear code base and quick response to our issues. 
