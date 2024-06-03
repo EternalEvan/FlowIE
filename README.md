@@ -37,6 +37,16 @@ We prepare the data in a samilar way as [GFPGAN](https://xinntao.github.io/proje
 For BFR evaluation, please refer to [here](https://xinntao.github.io/projects/gfpgan) for *BFR-test datasets*, which include *CelebA-Test*, *CelebChild-Test* and *LFW-Test*. The *WIDER-Test* can be found in [here](https://drive.google.com/file/d/1g05U86QGqnlN_v9SRRKDTU8033yvQNEa/view). For BFR training, please download the [FFHQ dataset](https://github.com/NVlabs/ffhq-dataset).
 
 For BSR, we utilize [ImageNet](https://www.image-net.org/index.php) for training. For evaluation, you can refer to [BSRGAN](https://github.com/cszn/BSRGAN/tree/main/testsets) for *RealSRSet*. 
+
+### 🗂️ 3. Download Checkpoints
+
+Please download our pretrained checkpoints from [this link](https://cloud.tsinghua.edu.cn/d/4fa2a0880a9243999561/) and put them under `./weights`. The file directory should be:
+
+```
+|-- checkpoints
+|--|-- FlowIE_bfr_v1.ckpt
+|--|-- FlowIE_bsr_v1.ckpt
+```
 <!--**For evaluation only, you can just prepare 3DPW dataset.**-->
 <!--
 ![](./assets/performance.png)
@@ -56,20 +66,6 @@ For BSR, we utilize [ImageNet](https://www.image-net.org/index.php) for training
 |   |   |-- imageFiles
 |   |   |-- sequenceFiles
 ```
-
-
-### 🗂️ 3. Download Checkpoints
-
-Please download our pretrained checkpoints from [this link](https://cloud.tsinghua.edu.cn/d/1d6cd3ee30204bb59fce/) and put them under `./checkpoints`. The file directory should be:
-
-```
-|-- checkpoints
-|--|-- 3dpw_best_ckpt.pth.tar
-|--|-- 3dpw-crowd_best_ckpt.pth.tar
-|--|-- 3dpw-oc_best_ckpt.pth.tar
-|--|-- 3dpw-pc_best_ckpt.pth.tar
-```
-
 ### 📊 4. Test & Evaluation
 
 You can test DPMesh use following commands:
