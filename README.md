@@ -130,13 +130,13 @@ We also thank [CodeFormer](https://github.com/sczhou/CodeFormer), [Real-ESRGAN](
 Please cite us if our work is useful for your research.
 
 ```
-@inproceedings{
-zhu2024flowie,
-title={FlowIE：Efficient Image Enhancement via Rectified Flow},
-author={Yixuan Zhu, Wenliang Zhao, Ao Li, Yansong Tang, Jie Zhou, Jiwen Lu},
-booktitle={Conference on Computer Vision and Pattern Recognition 2024},
-year={2024},
-url={https://openreview.net/forum?id=LjWYqguCBS}
+@misc{zhu2024flowie,
+      title={FlowIE: Efficient Image Enhancement via Rectified Flow}, 
+      author={Yixuan Zhu and Wenliang Zhao and Ao Li and Yansong Tang and Jie Zhou and Jiwen Lu},
+      year={2024},
+      eprint={2406.00508},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
 ```
 ## 🔑 License
