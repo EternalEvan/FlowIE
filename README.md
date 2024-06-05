@@ -57,7 +57,7 @@ Please download our pretrained checkpoints from [this link](https://cloud.tsingh
 ```
 |-- checkpoints
 |--|-- FlowIE_bfr_v1.ckpt
-|--|-- FlowIE_bsr_v1.ckpt
+...
 ```
 
 ### 📊 4. Test & Evaluation
