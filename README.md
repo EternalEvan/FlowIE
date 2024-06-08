@@ -6,7 +6,7 @@
 
 [**[Paper]**](https://arxiv.org/abs/2406.00508)
 
-The repository contains the official implementation for the paper "FlowIE: Efficient Image Enhancement via Rectified Flow" (CVPR 2024).
+The repository contains the official implementation for the paper "FlowIE: Efficient Image Enhancement via Rectified Flow" (**CVPR 2024, oral presentation**).
 
 FlowIE is a simple yet highly effective <ins>**Flow**</ins>-based <ins>**I**</ins>mage <ins>**E**</ins>nhancement framework that estimates straight-line paths from an elementary distribution to high-quality images.
 ## 📋 To-Do List
@@ -19,8 +19,8 @@ FlowIE is a simple yet highly effective <ins>**Flow**</ins>-based <ins>**I**</in
 
 ![](./assets/pipeline.png)
 
-## ⭐️ Performance
-Coming soon!
+<!-- ## ⭐️ Performance
+Coming soon! -->
 
 
 ## 😀Quick Start
