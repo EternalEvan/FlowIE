@@ -562,7 +562,16 @@ class LatentDiffusion(DDPM):
             self.scale_factor = scale_factor
         else:
             self.register_buffer('scale_factor', torch.tensor(scale_factor))
-        self.instantiate_first_stage(first_stage_config)
+            
+        if first_stage_config.use_fp16:
+            from diffusers import AutoencoderKL
+            self.first_stage_model = AutoencoderKL.from_pretrained(first_stage_config.model_id)
+            self.first_stage_model.eval()
+            for param in self.first_stage_model.parameters():
+                param.requires_grad = False
+        else:
+            self.instantiate_first_stage(first_stage_config)
+            
         self.instantiate_cond_stage(cond_stage_config)
         self.cond_stage_forward = cond_stage_forward
         self.clip_denoised = False

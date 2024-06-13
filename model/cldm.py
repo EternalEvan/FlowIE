@@ -463,10 +463,7 @@ class Reflow_ControlLDM(LatentDiffusion):
         self.control_scales = [1.0] * 13
         self.criterion = nn.MSELoss(reduction='mean')
         self.output_path = output
-        #self.criterion_lpips = LPIPS(
-        #    net_type='alex',  # choose a network type from ['alex', 'squeeze', 'vgg']
-        #    version='0.1'  # Currently, v0.1 is supported
-        # )
+     
         # instantiate preprocess module (SwinIR)
         self.preprocess_model = instantiate_from_config(preprocess_config)
         frozen_module(self.preprocess_model)
@@ -493,7 +490,7 @@ class Reflow_ControlLDM(LatentDiffusion):
     
     @torch.no_grad()
     def get_input(self, batch, k, bs=None, *args, **kwargs):
-        #batch = batch[0]
+ 
         x, c  = super().get_input(batch, self.first_stage_key,*args, **kwargs)
 
         control = batch[self.control_key]
@@ -587,11 +584,6 @@ class Reflow_ControlLDM(LatentDiffusion):
         
         lr = self.learning_rate
         params =   list(self.control_model.parameters())
-        # if not self.sd_locked:
-        #len_output_blocks = len(self.model.diffusion_model.output_blocks)
-        #params += list(self.model.diffusion_model.output_blocks[len_output_blocks//2:].parameters())
-        #params += list(self.model.diffusion_model.out.parameters())
-        #   params += list(self.unet_lora_params)  
         
         opt = torch.optim.AdamW(itertools.chain(self.unet_lora_params,params), lr=lr)
         #opt = torch.optim.AdamW(params, lr=lr)
@@ -599,50 +591,8 @@ class Reflow_ControlLDM(LatentDiffusion):
 
     @torch.no_grad()
     def validation_step(self, batch,batch_idx):
-        return
-        log = dict()
-        z, c = self.get_input(batch, self.first_stage_key)
-        c_lq = c["lq"][0]
-        c_latent = c["c_latent"][0]
-        c_cat, c = c["c_concat"][0], c["c_crossattn"][0]
-
-        cond={"c_concat": [c_cat], "c_crossattn": [c], "c_latent": [c_latent]}
-        
-
-        b, _, h, w = cond["c_concat"][0].shape
-        shape = (b, self.channels, h // 8, w // 8)
-        zT = torch.randn(shape,device=self.device)
-        zt = zT
-        diffusion_model = self.model.diffusion_model
-
-        cond_txt = torch.cat(cond['c_crossattn'], 1)
-        eular_steps = [999,801,601,401,201]
-        #eular_steps = [999,901,801,701,601,501,401,301,201,101]
-        for i,step in enumerate(eular_steps):
-            ts = torch.ones(zT.shape[0],device=self.device)*step
-
-            t_norm = ts.float()/(self.num_timesteps-1)
-            t_norm = t_norm.view(zT.shape[0],1,1,1)
-
-            #zt = t_norm * zT + (1 - t_norm) * zt
-            if cond['c_latent'] is None:
-                v = diffusion_model(x=zt, timesteps=ts, context=cond_txt, control=None, only_mid_control=self.only_mid_control)
-            else:
-                control = self.control_model(
-                    x=zt, hint=torch.cat(cond['c_latent'], 1),
-                    timesteps=ts, context=cond_txt
-                )
-                control = [c * scale for c, scale in zip(control, self.control_scales)]
-                v = diffusion_model(x=zt, timesteps=ts, context=cond_txt, control=control, only_mid_control=self.only_mid_control)
-            #ztt = zt+v
-            zt = zt+v/len(eular_steps)
-
-            if i==3:
-                x_samples = self.decode_first_stage(zT+v)
-                log["samples_3"] = (x_samples + 1) / 2
-        x_samples = self.decode_first_stage(zt)
-        log["samples"] = (x_samples + 1) / 2
-        return log
+        pass
+       
 
         # TODO: 
         # z0,cond = self.get_input(batch,self.first_stage_key)
@@ -677,7 +627,7 @@ class Reflow_ControlLDM(LatentDiffusion):
         pass
 
     def training_step(self, batch, batch_idx):
-        #self.log_images(batch)
+       
         z0,cond = self.get_input(batch,self.first_stage_key)
         zT = torch.randn_like(z0,device=self.device)
         B = z0.shape[0]
@@ -689,18 +639,7 @@ class Reflow_ControlLDM(LatentDiffusion):
         zt = t_norm * zT + (1 - t_norm) * z0
         
         diffusion_model = self.model.diffusion_model
-        #print(diffusion_model.middle_block[1].transformer_blocks[0].attn1.to_q.lora_down.weight[0])
-        #print(diffusion_model.middle_block[1].transformer_blocks[0].attn1.to_q.lora_up.weight[0])
-        #print(diffusion_model.middle_block[1].transformer_blocks[0].attn1.to_q.lora_up.weight[0].requires_grad)
-        # for k in range(len(self.unet_lora_params)):
-        #      print(self.unet_lora_params[k][0][0])
-        #      print(self.unet_lora_params[k][0][0].grad)
-         
-        #pdb.set_trace()
-        # for k in itertools.chain(*self.unet_lora_params):
-        #     print(k)
-        #     print(k.grad)
-
+       
         cond_txt = torch.cat(cond['c_crossattn'], 1)
 
         if cond['c_latent'] is None:
@@ -716,221 +655,31 @@ class Reflow_ControlLDM(LatentDiffusion):
         loss_mse = self.criterion(z0-zT,v)
       
       
-        #x_refine = self.decode_first_stage(zT+v)
-        #x_hq = self.decode_first_stage(z0)
-        #print(v.shape)
-        #loss_perc = self.criterion_lpips(x_hq,x_refine)
+        # x_refine = self.decode_first_stage(zT+v)
+        # x_hq = self.decode_first_stage(z0)
+       
+        # loss_perc = self.criterion_lpips(x_hq,x_refine)
         log_prefix = 'train' if self.training else 'val'
-        #losses.update({f'{log_prefix}/loss':loss_mse,f'{log_prefix}/loss_MSE':loss_mse})
+        losses.update({f'{log_prefix}/loss':loss_mse,f'{log_prefix}/loss_MSE':loss_mse})
         self.log(f'{log_prefix}/loss_mse',loss_mse,logger=True)
         #self.log(f'{log_prefix}/loss_lpips',loss_perc,logger=True)
-        return loss_mse#+loss_perc
+        return loss_mse   #+loss_perc
 
-    @torch.no_grad()
-    def test_step_ori(self, batch,batch_idx):
-        #if batch_idx <=392:
-        #    return 
-        final_path = join(self.output_path,'final')
-        mid_path = join(self.output_path,'mid')
-        
-        #final_path = '/home/zyx/DiffBIR-main/outputs/custom-test1/final'
-        #mid_path = '/home/zyx/DiffBIR-main/outputs/custom-test1/midd'
-        cond_path = join(self.output_path,'cond')
-        
-        z0_path = join(self.output_path,'z0')
-        z1_path = join(self.output_path,'z1')
-        z2_path = join(self.output_path,'z2')
-        '''z1_path = '/home/user001/zwl/zyx/Diffbir/outputs/inpainting-4/z1'
-        z2_path = '/home/user001/zwl/zyx/Diffbir/outputs/inpainting-4/z2'
-        z4_path = '/home/user001/zwl/zyx/Diffbir/outputs/inpainting-4/z4' '''
-        hq_path = join(self.output_path,'hq')
-        lq_path = join(self.output_path,'lq')
-  
-        os.makedirs(mid_path,exist_ok=True)
- 
-    
- 
-        '''os.makedirs(z1_path,exist_ok=True)
-        os.makedirs(z2_path,exist_ok=True)
-        os.makedirs(z4_path,exist_ok=True)'''
-        
-        images_hq = (batch['jpg'] + 1) / 2
-        images_hq = images_hq.permute((0,3,1,2))
-        imgname_batch = batch['imgname']
 
-        '''save_batch(images=images_hq,
-                   imgname_batch=imgname_batch,
-                   save_path=hq_path,
-                   watch_step=False)'''
-        
-        
-        #os.makedirs(lq_path,exist_ok=True)
-        os.makedirs(z0_path,exist_ok=True)
-        os.makedirs(z1_path,exist_ok=True)
-        os.makedirs(z2_path,exist_ok=True)
-        os.makedirs(final_path,exist_ok=True)
-        
-        log = dict()
-        #if batch_idx <=398:
-        #    return
-        imgname_batch = batch['imgname']
-        z, c = self.get_input(batch, self.first_stage_key)
-        c_lq = c["lq"][0]
-        c_latent = c["c_latent"][0]
-        c_cat, c = c["c_concat"][0], c["c_crossattn"][0]
-
-        images_lq = c_lq
-        B,C,H,W = z.shape
-       
-      
-        #pdb.set_trace()
-        #images_lq = images_lq.permute((0,3,1,2))
-        '''save_batch(images=images_lq,
-                   imgname_batch=imgname_batch,
-                   save_path=lq_path,
-                   watch_step=False)'''
-        
-        images_cond = c_cat
-        log["control"] = c_cat
-        #log["decoded_control"] = (self.decode_first_stage(c_latent) + 1) / 2
-        
-        #log["text"] = (log_txt_as_img((512, 512), batch[self.cond_stage_key], size=16) + 1) / 2
-        
-        
-        cond={"c_concat": [c_cat], "c_crossattn": [c], "c_latent": [c_latent]}
-        
-
-        b, _, h, w = cond["c_concat"][0].shape
-        shape = (b, self.channels, h // 8, w // 8)
-        zT = torch.randn(shape,device=self.device)
-        zt = zT
-        diffusion_model = self.model.diffusion_model
-
-        cond_txt = torch.cat(cond['c_crossattn'], 1)
-        eular_steps = [999,799,599,349,199]
-        #eular_steps = [999,801,601,401,201]
-        #eular_steps = [999,899,799,699,599,499,399,299,199,99]
-        for i,step in enumerate(eular_steps):
-            ts = torch.ones(zT.shape[0],device=self.device)*step
-
-            t_norm = ts.float()/(self.num_timesteps-1)
-            t_norm = t_norm.view(zT.shape[0],1,1,1)
-
-            #zt = t_norm * zT + (1 - t_norm) * zt
-            if cond['c_latent'] is None:
-                v = diffusion_model(x=zt, timesteps=ts, context=cond_txt, control=None, only_mid_control=self.only_mid_control)
-            else:
-                control = self.control_model(
-                    x=zt, hint=torch.cat(cond['c_latent'], 1),
-                    timesteps=ts, context=cond_txt
-                )
-                control = [c * scale for c, scale in zip(control, self.control_scales)]
-                v = diffusion_model(x=zt, timesteps=ts, context=cond_txt, control=control, only_mid_control=self.only_mid_control)
-            #print(i)
-            #ztt = zt+v
-            zt = zt+v/len(eular_steps)
-            
-            ''' z_noise = torch.randn(shape,device=self.device)
-            z_gt = z_noise*t_norm+ z*(1-t_norm)
-            
-            zt = zt*mask+z_gt*(1-mask)'''
-            #zt = zt*mask + z*(1-mask)
-            #x_samples = self.decode_first_stage(zT+v)
-            #images_aa = (x_samples + 1) / 2
-            #save_image(images_aa,'./aa_'+str(i)+'.png')
-            #pdb.set_trace()
-            if i == len(eular_steps)-1:
-                x_samples = self.decode_first_stage(zt)
-                images_final = (x_samples + 1) / 2
-            #save_image(log['samples'],'aa{}_step.png'.format(str(i)))
-            
-            
-            if i == 3:
-                x_samples = self.decode_first_stage(zT+v )
-                images_mid = (x_samples + 1) / 2
-                images_midd = images_mid
-                
-                save_batch(images=images_midd,
-                   imgname_batch=imgname_batch,
-                   save_path=mid_path,
-                   watch_step=False)
-                
-            
-            if i == 0:
-                x_samples = self.decode_first_stage(zT+v)
-                images_z0 = (x_samples + 1) / 2
-                images_z0 = images_z0
-                
-                save_batch(images=images_z0,
-                   imgname_batch=imgname_batch,
-                   save_path=z0_path,
-                   watch_step=False)
-                
-            if i == 1:
-                x_samples = self.decode_first_stage(zT+v)
-                images_z1 = (x_samples + 1) / 2
-                images_z1 = images_z1
-                
-                save_batch(images=images_z1,
-                   imgname_batch=imgname_batch,
-                   save_path=z1_path,
-                   watch_step=False)
-                
-            if i == 2:
-                x_samples = self.decode_first_stage(zT+v)
-                images_z2 = (x_samples + 1) / 2
-                images_z2 = images_z2
-                
-                save_batch(images=images_z2,
-                   imgname_batch=imgname_batch,
-                   save_path=z2_path,
-                   watch_step=False)
-            #loss_mse = self.criterion(z,zT+v)
-            #loss_lpips = self.criterion_lpips(images_mid,images_hq)
-            #print('lpips:',loss_lpips)
-            #print('mse:',loss_mse)
-        #loss_lpips = self.criterion_lpips(images,images_hq)
-        #print('lpips_final:',loss_lpips)
-        save_batch(images = images_final,
-                   imgname_batch = imgname_batch,
-                   save_path = final_path,
-                   watch_step=False)
-        
-
-      
-        
-        '''save_batch(images=images_cond,
-                   imgname_batch=imgname_batch,
-                   save_path=cond_path,
-                   watch_step=False)'''
-        
-        
-        '''save_batch(images=images_z4,
-                   imgname_batch=imgname_batch,
-                   save_path=z4_path,
-                   watch_step=False)'''
-        
-        
-        
-        
-        
-        return log
     def test_step(self, batch,batch_idx):
-        #if batch_idx <= 400 or batch_idx>=500:
-        #    return 
+       
         final_path = join(self.output_path,'final')
         mid_path = join(self.output_path,'mid')
         
-        #final_path = '/home/zyx/DiffBIR-main/outputs/custom-test1/final'
-        #mid_path = '/home/zyx/DiffBIR-main/outputs/custom-test1/midd'
+       
         cond_path = join(self.output_path,'cond')
         
         z0_path = join(self.output_path,'z0')
         z1_path = join(self.output_path,'z1')
         z2_path = join(self.output_path,'z2')
-        '''z1_path = '/home/user001/zwl/zyx/Diffbir/outputs/inpainting-4/z1'
-        z2_path = '/home/user001/zwl/zyx/Diffbir/outputs/inpainting-4/z2'
-        z4_path = '/home/user001/zwl/zyx/Diffbir/outputs/inpainting-4/z4' '''
+        '''z1_path = './outputs/inpainting-4/z1'
+        z2_path = './outputs/inpainting-4/z2'
+        z4_path = './outputs/inpainting-4/z4' '''
         hq_path = join(self.output_path,'hq')
         lq_path = join(self.output_path,'lq')
         os.makedirs(final_path,exist_ok=True)
@@ -962,8 +711,7 @@ class Reflow_ControlLDM(LatentDiffusion):
         os.makedirs(z2_path,exist_ok=True)'''
         
         log = dict()
-        #if batch_idx <=398:
-        #    return
+ 
         imgname_batch = batch['imgname']
         for idx,name in enumerate(imgname_batch):
             imgname_batch[idx] = name[:-4]+'_'+str(batch_idx)+'_'+str(idx)+'.png'
@@ -975,14 +723,13 @@ class Reflow_ControlLDM(LatentDiffusion):
         images_lq = c_lq
         B,C,H,W = z.shape
         mask = torch.zeros(B,1,512, 512)
-        print(c_lq.shape)
         m_ind = torch.sum(c_lq, dim=1).view(B,1,512, 512)
         mask[m_ind==3] = 1.0
-        #pdb.set_trace()
+      
         mask = mask.view(B,1,512, 512).to(c_lq)
         mask = F.interpolate(mask, size=(H,W), mode='nearest')
-        #pdb.set_trace()
-        #images_lq = images_lq.permute((0,3,1,2))
+       
+      
         save_batch(images=images_lq,
                    imgname_batch=imgname_batch,
                    save_path=lq_path,
@@ -990,10 +737,7 @@ class Reflow_ControlLDM(LatentDiffusion):
         
         images_cond = c_cat
         log["control"] = c_cat
-        #log["decoded_control"] = (self.decode_first_stage(c_latent) + 1) / 2
-        
-        #log["text"] = (log_txt_as_img((512, 512), batch[self.cond_stage_key], size=16) + 1) / 2
-        
+    
         
         cond={"c_concat": [c_cat], "c_crossattn": [c], "c_latent": [c_latent]}
         
@@ -1007,7 +751,7 @@ class Reflow_ControlLDM(LatentDiffusion):
 
         cond_txt = torch.cat(cond['c_crossattn'], 1)
         eular_steps = [999,749,499,249]
-        #eular_steps = [999,801,601,401,201]
+      
         #eular_steps = [999,899,799,699,599,499,399,299,199,99]
         for i,step in enumerate(eular_steps):
             ts = torch.ones(zT.shape[0],device=self.device)*step
@@ -1025,8 +769,7 @@ class Reflow_ControlLDM(LatentDiffusion):
                 )
                 control = [c * scale for c, scale in zip(control, self.control_scales)]
                 v = diffusion_model(x=zt, timesteps=ts, context=cond_txt, control=control, only_mid_control=self.only_mid_control)
-            #print(i)
-            #ztt = zt+v
+        
             zt = zt+v/len(eular_steps)
             
             ''' z_noise = torch.randn(shape,device=self.device)
@@ -1083,12 +826,7 @@ class Reflow_ControlLDM(LatentDiffusion):
                    imgname_batch=imgname_batch,
                    save_path=z2_path,
                    watch_step=False)
-            #loss_mse = self.criterion(z,zT+v)
-            #loss_lpips = self.criterion_lpips(images_mid,images_hq)
-            #print('lpips:',loss_lpips)
-            #print('mse:',loss_mse)
-        #loss_lpips = self.criterion_lpips(images,images_hq)
-        #print('lpips_final:',loss_lpips)
+         
         save_batch(images = images_final,
                    imgname_batch = imgname_batch,
                    save_path = final_path,
@@ -1101,15 +839,6 @@ class Reflow_ControlLDM(LatentDiffusion):
                    imgname_batch=imgname_batch,
                    save_path=cond_path,
                    watch_step=False)
-        
-        
-        '''save_batch(images=images_z4,
-                   imgname_batch=imgname_batch,
-                   save_path=z4_path,
-                   watch_step=False)'''
-        
-        
-        
         
         
         return log    

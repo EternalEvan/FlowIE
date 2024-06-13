@@ -12,7 +12,7 @@ FlowIE is a simple yet highly effective <ins>**Flow**</ins>-based <ins>**I**</in
 ## 📋 To-Do List
 
 * [ ] Release model and inference code.
-* [ ] Release code for training dataloader .
+* [ ] Release code for training dataloader.
 
 
 ## 💡 Pipeline
@@ -59,6 +59,7 @@ Please download our pretrained checkpoints from [this link](https://cloud.tsingh
 ```
 |-- checkpoints
 |--|-- FlowIE_bfr_v1.ckpt
+|--|-- FlowIE_bsr_v1.ckpt
 ...
 ```
 
@@ -67,11 +68,11 @@ Please download our pretrained checkpoints from [this link](https://cloud.tsingh
 You can test FlowIE with following commands:
 - **Evaluation for BFR**
 ```bash
-python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt --has_aligned  --input /data/celeba_512_validation_lq/  --output ./outputs/bfr_exp
+python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt --has_aligned  --input /data/celeba_512_validation_lq/  --output ./outputs/bfr_exp --has_aligned
 ```
 - **Evaluation for BSR**
 ```bash
-coming soon
+python inference_bsr.py --ckpt ./weights/FlowIE_bsr_v1.ckpt --has_aligned  --input /data/testdata/  --output ./outputs/bsr_exp
 ```
 - **Quick Test**
 
@@ -81,8 +82,9 @@ python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt  --input ./assets/fa
 ```
 And for BSR:
 ```bash
-coming soon
+python inference_bsr.py --ckpt ./weights/FlowIE_bsr_v1.ckpt --has_aligned  --input /data/testdata/  --output ./outputs/bsr_exp --tiled
 ```
+You can use `--tiled` for patch-based inference and use `--sr_scale` tp set the super-resolution scale, like 1, 2 or 4. You can set `CUDA_VISIBLE_DEVICES=1` to choose the devices.
 <!--```bash
 CUDA_VISIBLE_DEVICES=0 \
 torchrun \
@@ -101,7 +103,7 @@ The key component in FlowIE is a path estimator tuned from [Stable Diffusion v2.
 
 Before training, you also need to configure training-related information in `./configs/train_cldm.yaml`. Then run this command to start training:
 ```bash
-coming soon
+python train.py --config ./configs/train_cldm.yaml
 ```
 <!--**For evaluation only, you can just prepare 3DPW dataset.**-->
 <!--
@@ -127,6 +129,8 @@ coming soon
 We would like to express our sincere thanks to the author of [DiffBIR](https://github.com/XPixelGroup/DiffBIR) for the clear code base and quick response to our issues. 
 
 We also thank [CodeFormer](https://github.com/sczhou/CodeFormer), [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) and [LoRA](https://github.com/cloneofsimo/lora), for our code is partially borrowing from them.
+
+The new version of FlowIE based on Denoising Transformer (DiT) structure will be released soon! Thanks the newest works of DiTs, including [PixART](https://github.com/PixArt-alpha/PixArt-sigma) and [Stable Diffusion 3](https://huggingface.co/stabilityai/stable-diffusion-3-medium).
 
 ## 🔖 Citation
 Please cite us if our work is useful for your research.

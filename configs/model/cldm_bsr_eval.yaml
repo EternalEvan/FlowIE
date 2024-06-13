@@ -1,5 +1,5 @@
-target: model.cldm.ControlLDM
-#target: model.cldm.Reflow_ControlLDM
+#target: model.cldm.ControlLDM
+target: model.cldm.Reflow_ControlLDM
 params:
   linear_start: 0.00085
   linear_end: 0.0120
@@ -17,14 +17,14 @@ params:
   scale_factor: 0.18215
   use_ema: False
   
-  sd_locked: True
+  sd_locked: False
   only_mid_control: False
   # Learning rate.
   learning_rate: 1e-4
-  #lora_rank: 4
+  lora_rank: 64
   
   control_stage_config:
-    target: model.cldm.ControlNet
+    target: diffusion.cldm.ControlNet
     params:
       use_checkpoint: True
       image_size: 32 # unused
@@ -40,9 +40,10 @@ params:
       transformer_depth: 1
       context_dim: 1024
       legacy: False
+      use_fp16: False
 
   unet_config:
-    target: model.cldm.ControlledUnetModel
+    target: diffusion.cldm.ControlledUnetModel
     params:
       use_checkpoint: false
       image_size: 32 # unused
@@ -58,8 +59,11 @@ params:
       transformer_depth: 1
       context_dim: 1024
       legacy: False
-
+      use_fp16: False
+      
   first_stage_config:
+    use_fp16: True
+    model_id: stabilityai/sd-vae-ft-ema
     target: ldm.models.autoencoder.AutoencoderKL
     params:
       embed_dim: 4
@@ -90,7 +94,7 @@ params:
       layer: "penultimate"
 
   preprocess_config:
-    target: model.swinir.SwinIR
+    target: diffusion.model.swinir.SwinIR
     params:
       img_size: 64
       patch_size: 1

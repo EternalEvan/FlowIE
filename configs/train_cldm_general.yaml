@@ -2,16 +2,14 @@ data:
   target: dataset.data_module.BIRDataModule
   params:
     # Path to training set configuration file.
-    train_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/derain_train.yaml
-    #train_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/ocr_train.yaml
+    train_config: ./configs/dataset/derain_train.yaml
     # Path to validation set configuration file.
-    val_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/derain_val.yaml
-    #val_config: /home/user001/zwl/zyx/Diffbir/configs/dataset/ocr_val.yaml
+    val_config: ./configs/dataset/derain_val.yaml
 
 model:
   # You can set learning rate in the following configuration file.
-  config: /home/user001/zwl/zyx/Diffbir/configs/model/cldm.yaml
-  resume: /home/user001/zwl/zyx/Diffbir/work_dirs/exp0_general_all/lightning_logs/version_3/checkpoints/step=84999.ckpt
+  config: ./configs/model/cldm.yaml
+  resume: ./work_dirs/exp0_general_all/lightning_logs/version_3/checkpoints/step=84999.ckpt
 
 lightning:
   seed: 231
@@ -22,7 +20,7 @@ lightning:
     # Indices of GPUs used for training.
     gpus: [1,2,3,4,5,6,7]
     # Path to save logs and checkpoints.
-    default_root_dir: /home/user001/zwl/data/flowir_work_dirs/derain0
+    default_root_dir: ./work_dirs/derain0
     # Max number of training steps (batches).
     max_steps: 250001
     # Validation frequency in terms of training steps.
