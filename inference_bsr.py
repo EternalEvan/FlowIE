@@ -186,12 +186,12 @@ def parse_args() -> Namespace:
     
     # TODO: add help info for these options
     parser.add_argument("--ckpt", required=True, type=str, help="full checkpoint path")
-    parser.add_argument("--config", required=True, type=str, help="model config path")
+    parser.add_argument("--config", default='configs/model/cldm_bsr_eval.yaml', type=str, help="model config path")
     parser.add_argument("--reload_swinir", action="store_true")
     parser.add_argument("--swinir_ckpt", type=str, default="")
     
     parser.add_argument("--input", type=str, required=True)
-    parser.add_argument("--steps", required=True, type=int)
+    parser.add_argument("--steps", default=1, type=int)
     parser.add_argument("--sr_scale", type=float, default=1)
     parser.add_argument("--repeat_times", type=int, default=1)
     parser.add_argument("--disable_preprocess_model", action="store_true")
