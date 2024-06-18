@@ -20,7 +20,6 @@ from utils.image import auto_resize, pad
 from utils.common import instantiate_from_config, load_state_dict
 from utils.file import list_image_files, get_file_name_parts
 
-from diffusers.models import AutoencoderKL
 
 from tqdm import tqdm
 

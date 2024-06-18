@@ -1,5 +1,5 @@
 #target: model.cldm.ControlLDM
-target: model.cldm.Reflow_ControlLDM
+target: model.cldm_bsr.Reflow_ControlLDM
 params:
   linear_start: 0.00085
   linear_end: 0.0120
@@ -24,7 +24,7 @@ params:
   lora_rank: 64
   
   control_stage_config:
-    target: diffusion.cldm.ControlNet
+    target: model.cldm_bsr.ControlNet
     params:
       use_checkpoint: True
       image_size: 32 # unused
@@ -43,7 +43,7 @@ params:
       use_fp16: False
 
   unet_config:
-    target: diffusion.cldm.ControlledUnetModel
+    target: model.cldm_bsr.ControlledUnetModel
     params:
       use_checkpoint: false
       image_size: 32 # unused
@@ -94,7 +94,7 @@ params:
       layer: "penultimate"
 
   preprocess_config:
-    target: diffusion.model.swinir.SwinIR
+    target: model.swinir.SwinIR
     params:
       img_size: 64
       patch_size: 1
