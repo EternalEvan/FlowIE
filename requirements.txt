@@ -8,6 +8,7 @@ open-clip-torch
 omegaconf
 torchmetrics==0.6.0
 triton==2.0.0
+lora-diffusion==0.1.7
 opencv-python-headless
 scipy
 matplotlib
