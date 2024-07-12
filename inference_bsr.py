@@ -97,7 +97,7 @@ def process(
     control = torch.tensor(np.stack(control_imgs) / 255.0, dtype=torch.float32, device=model.device).clamp_(0, 1)
     control = einops.rearrange(control, "n h w c -> n c h w").contiguous()
     
-    y_null_all = torch.load("/home/whl/workspace/VideoSR/PixArt-sigma/output_old/pretrained_models/null_token_1024.pth", map_location="cpu")
+    y_null_all = torch.load("./weights/null_token_1024.pth", map_location="cpu")
     y_null_ori = y_null_all['null_prompt_embeds'].to(control)
     y_null = y_null_ori.repeat((control.shape[0],1,1))
     
@@ -248,16 +248,16 @@ def main() -> None:
     
     args.device = check_device(args.device)
     
-    model = instantiate_from_config(OmegaConf.load('./configs/cldm_bsr_eval.yaml'))
+    model = instantiate_from_config(OmegaConf.load('./configs/model/cldm_bsr_eval.yaml'))
     load_state_dict(model, torch.load(args.ckpt, map_location="cpu"), strict=False)
     
     vae = model.first_stage_model
     vae = vae.to(torch.float32).to(args.device)
     
     preprocess_model = model.preprocess_model
-    # preprocess_config = './configs/swinir.yaml'
+    # preprocess_config = './configs/model/swinir.yaml'
     # preprocess_model = instantiate_from_config(OmegaConf.load(preprocess_config))
-    # load_state_dict(preprocess_model, torch.load('weights/general_swinir_v1.ckpt', map_location="cpu"), strict=True)
+    # load_state_dict(preprocess_model, torch.load('/data/general_swinir_v1.ckpt', map_location="cpu"), strict=True)
     preprocess_model.to(args.device)
     
     # reload preprocess model if specified

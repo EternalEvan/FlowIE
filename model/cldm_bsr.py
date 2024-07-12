@@ -477,14 +477,14 @@ class Reflow_ControlLDM(LatentDiffusion):
         # instantiate condition encoder, since our condition encoder has the same 
         # structure with AE encoder, we just make a copy of AE encoder. please
         # note that AE encoder's parameters has not been initialized here.
-        self.cond_encoder = nn.Sequential(OrderedDict([
-            ("encoder", copy.deepcopy(self.first_stage_model.encoder)), # cond_encoder.encoder
-            ("quant_conv", copy.deepcopy(self.first_stage_model.quant_conv)) # cond_encoder.quant_conv
-        ]))
-        frozen_module(self.cond_encoder)
-        self.model.diffusion_model.requires_grad_(False)
+        # self.cond_encoder = nn.Sequential(OrderedDict([
+        #     ("encoder", copy.deepcopy(self.first_stage_model.encoder)), # cond_encoder.encoder
+        #     ("quant_conv", copy.deepcopy(self.first_stage_model.quant_conv)) # cond_encoder.quant_conv
+        # ]))
+        # frozen_module(self.cond_encoder)
+        # self.model.diffusion_model.requires_grad_(False)
    
-        self.unet_lora_params, self.train_names = inject_trainable_lora(self.model.diffusion_model,r=lora_rank)
+        # self.unet_lora_params, self.train_names = inject_trainable_lora(self.model.diffusion_model,r=lora_rank)
         # print(self.train_names)
    
         
@@ -599,35 +599,7 @@ class Reflow_ControlLDM(LatentDiffusion):
         pass
 
         # TODO: 
-        # z0,cond = self.get_input(batch,self.first_stage_key)
-        # zT = torch.rand_like(z0,device=self.device)
-        # B = z0.shape[0]
-        
-        # t = torch.randint(0, self.num_timesteps, (z0.shape[0],), device=self.device).long()
-        # t_norm = t.float()/(self.num_timesteps-1)
-        # t_norm = t_norm.view(B,1,1,1)
-
-        # zt = t_norm * zT + (1 - t_norm) * z0
-        
-        # diffusion_model = self.model.diffusion_model
-
-        # cond_txt = torch.cat(cond['c_crossattn'], 1)
-
-        # if cond['c_latent'] is None:
-        #      v = diffusion_model(x=zt, timesteps=t, context=cond_txt, control=None, only_mid_control=self.only_mid_control)
-        # else:
-        #     control = self.control_model(
-        #         x=zt, hint=torch.cat(cond['c_latent'], 1),
-        #         timesteps=t.float(), context=cond_txt
-        #     )
-        #     control = [c * scale for c, scale in zip(control, self.control_scales)]
-        #     v = diffusion_model(x=zt, timesteps=t, context=cond_txt, control=control, only_mid_control=self.only_mid_control)
-        
-        # loss_mse = self.criterion(z0-zT,v)
-        # log_prefix = 'train' if self.training else 'val'
-        # self.log(f'{log_prefix}/loss',loss_mse)
-
-        # return
+    
         pass
 
     def training_step(self, batch, batch_idx):

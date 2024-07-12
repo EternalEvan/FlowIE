@@ -145,7 +145,7 @@ class FrozenOpenCLIPEmbedder(AbstractEncoder):
                  freeze=True, layer="last"):
         super().__init__()
         assert layer in self.LAYERS
-        version = '/home/user001/.cache/huggingface/hub/models--laion--CLIP-ViT-H-14-laion2B-s32B-b79K/snapshots/94a64189c3535c1cb44acfcccd7b0908c1c8eb23/open_clip_pytorch_model.bin'
+        version = '/data3/share/models--laion--CLIP-ViT-H-14-laion2B-s32B-b79K/snapshots/de081ac0a0ca8dc9d1533eed1ae884bb8ae1404b/open_clip_pytorch_model.bin'
         model, _, _ = open_clip.create_model_and_transforms(arch, device=torch.device('cpu'), pretrained=version)
         del model.visual
         self.model = model
