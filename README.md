@@ -72,7 +72,7 @@ python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt --has_aligned  --inp
 ```
 - **Evaluation for BSR**
 ```bash
-python inference_bsr.py --ckpt ./weights/FlowIE_bsr_v1.ckpt --has_aligned  --input /data/testdata/  --output ./outputs/bsr_exp
+python inference_bsr.py --ckpt ./weights/FlowIE_bsr_v1.ckpt  --input /data/testdata/  --output ./outputs/bsr_exp --sr_scale 4
 ```
 - **Quick Test**
 
