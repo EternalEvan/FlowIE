@@ -82,7 +82,7 @@ python inference_bfr.py --ckpt ./weights/FlowIE_bfr_v1.ckpt  --input ./assets/fa
 ```
 And for BSR:
 ```bash
-python inference_bsr.py --ckpt ./weights/FlowIE_bsr_v1.pth  --input /data/testdata/  --output ./outputs/bsr_exp --tiled --sr_scale 4
+python inference_bsr.py --ckpt ./weights/FlowIE_bsr_v1.pth  --input ./assets/real-photos/  --output ./outputs/bsr_exp --tiled --sr_scale 4
 ```
 You can use `--tiled` for patch-based inference and use `--sr_scale` tp set the super-resolution scale, like 2 or 4. You can set `CUDA_VISIBLE_DEVICES=1` to choose the devices.
 <!--```bash
