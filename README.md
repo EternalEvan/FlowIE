@@ -11,8 +11,8 @@ The repository contains the official implementation for the paper "FlowIE: Effic
 FlowIE is a simple yet highly effective <ins>**Flow**</ins>-based <ins>**I**</ins>mage <ins>**E**</ins>nhancement framework that estimates straight-line paths from an elementary distribution to high-quality images.
 ## 📋 To-Do List
 
-* [ ] Release model and inference code.
-* [ ] Release code for training dataloader.
+* [x] Release model and inference code.
+* [x] Release code for training dataloader.
 
 
 ## 💡 Pipeline
@@ -30,6 +30,20 @@ We recommend you to use an [Anaconda](https://www.anaconda.com/) virtual environ
 ``` bash
 conda env create -f requirements.txt
 conda activate FlowIE
+```
+### 📑 2. Modify the lora configuration
+Since we use "MemoryEfficientCrossAttention" to accelerate the inference process, we need to slightly modify the lora.py in lora_diffusion package, which could be done in 2 minutes:
+(1) Locate the lora.py file in the package directory. You can easily find this file by using the "go to definition" button in Line 4 of the ./model/cldm.py file.
+(2) Make the following modifications to Lines 159-161 in lora.py:
+Original Code:
+```bash
+UNET_DEFAULT_TARGET_REPLACE = {"CrossAttention", "Attention", "GEGLU"}
+UNET_EXTENDED_TARGET_REPLACE = {"ResnetBlock2D", "CrossAttention", "Attention", "GEGLU"}
+Modified Code:
+```
+```bash
+UNET_DEFAULT_TARGET_REPLACE = {"CrossAttention", "Attention", "GEGLU", "MemoryEfficientCrossAttention"}
+UNET_EXTENDED_TARGET_REPLACE = {"ResnetBlock2D", "CrossAttention", "Attention", "GEGLU", "MemoryEfficientCrossAttention", "ResBlock"}
 ```
 
 ### 💾 2. Data Preparation
