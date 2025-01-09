@@ -43,7 +43,7 @@ UNET_EXTENDED_TARGET_REPLACE = {"ResnetBlock2D", "CrossAttention", "Attention", 
 ```
 
 Modified Code:
-```bash
+```python
 UNET_DEFAULT_TARGET_REPLACE = {"CrossAttention", "Attention", "GEGLU", "MemoryEfficientCrossAttention"}
 UNET_EXTENDED_TARGET_REPLACE = {"ResnetBlock2D", "CrossAttention", "Attention", "GEGLU", "MemoryEfficientCrossAttention", "ResBlock"}
 ```
