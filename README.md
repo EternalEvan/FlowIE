@@ -35,8 +35,9 @@ conda activate FlowIE
 Since we use "MemoryEfficientCrossAttention" to accelerate the inference process, we need to slightly modify the lora.py in lora_diffusion package, which could be done in 2 minutes:
 - (1) Locate the lora.py file in the package directory. You can easily find this file by using the "go to definition" button in Line 4 of the ./model/cldm.py file.
 - (2) Make the following modifications to Lines 159-161 in lora.py:
+
 Original Code:
-```bash
+```python
 UNET_DEFAULT_TARGET_REPLACE = {"CrossAttention", "Attention", "GEGLU"}
 UNET_EXTENDED_TARGET_REPLACE = {"ResnetBlock2D", "CrossAttention", "Attention", "GEGLU"}
 ```
