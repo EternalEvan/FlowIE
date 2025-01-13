@@ -4,7 +4,7 @@ torchvision==0.14.1+cu116
 xformers==0.0.16
 pytorch_lightning==1.4.2\
 einops
-open-clip-torch
+open-clip-torch==2.24.0
 omegaconf
 torchmetrics==0.6.0
 triton==2.0.0
